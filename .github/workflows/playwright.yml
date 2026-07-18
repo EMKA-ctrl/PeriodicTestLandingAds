@@ -1,4 +1,5 @@
 name: Playwright Tests
+
 on:
   schedule:
     # GitHub Actions cron expressions use UTC. Runs every day at 06:00 UTC.
@@ -8,6 +9,12 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test:
     timeout-minutes: 60
@@ -23,9 +30,34 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
-    - uses: actions/upload-artifact@v6
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v6
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+    - name: Configure GitHub Pages
+      if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+      uses: actions/configure-pages@v6
+    - name: Upload report for GitHub Pages
+      if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+      uses: actions/upload-pages-artifact@v5
+      with:
+        path: playwright-report/
+
+  deploy:
+    name: Publish Playwright report
+    needs: test
+    if: ${{ always() && needs.test.result != 'cancelled' && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: github-pages
+      cancel-in-progress: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
