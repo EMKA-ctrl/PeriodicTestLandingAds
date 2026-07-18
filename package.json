@@ -1,0 +1,26 @@
+{
+  "name": "periodictestlandingads",
+  "version": "1.0.0",
+  "description": "PeriodicTestLandingAds",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:landingads": "playwright test tests/landingads.spec.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EMKA-ctrl/PeriodicTestLandingAds.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/EMKA-ctrl/PeriodicTestLandingAds/issues"
+  },
+  "homepage": "https://github.com/EMKA-ctrl/PeriodicTestLandingAds#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.1"
+  }
+}
